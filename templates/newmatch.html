@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Add New Match</title>
+  </head>
+  <body>
+    {% if session %}
+    <h1>Welcome {{session.userinfo.name}}!</h1>
+    <p><a href="/logout" id="qsLogoutBtn">Logout</a></p>
+    {% else %}
+    <h1 id="profileDropDown">Welcome Guest</h1>
+    <p><a href="/login" id="qsLoginBtn">Login</a></p>
+    {% endif %}
+    <h2>
+        <a href="/">SCHEDULE</a>
+        <a href="/standings">STANDINGS</a>
+        {% for i in range(data.get_num_rounds_played()) %}
+            <a href="{{ url_for('round', round_num = i+1) }}">ROUND {{i+1}}</a>
+        {% endfor %}
+        {% if session and session.userinfo.nickname in admins %}
+            <a href="/match">ADD NEW MATCH</a>
+        {% endif %}
+    </h2>
+
+
+    <form action="/newmatch" method="POST">
+        <label for="round_num">ROUND NUMBER:</label>
+        <input type="text" name="round_num" />
+        <label for="team_1">TEAM 1 NAME:</label>
+        <input type="text" name="team_1" />
+        <label for="team_2">TEAM 2 NAME:</label>
+        <input type="text" name="team_2" />
+        <label for="team_1_score">TEAM 1 SCORE:</label>
+        <input type="text" name="team_1_score" />
+        <label for="team_2_score">TEAM 2 SCORE:</label>
+        <input type="text" name="team_2_score" />
+        <label for="match_time">MATCH TIME:</label>
+        <input type="datetime-local" name="match_time" />
+        <input type="submit" name="submit" />
+    </form>
+  </body>
+</html>

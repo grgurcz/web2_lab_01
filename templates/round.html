@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Round {{round_num}}</title>
+  </head>
+  <body>
+    {% if session %}
+    <h1>Welcome {{session.userinfo.name}}!</h1>
+    <p><a href="/logout" id="qsLogoutBtn">Logout</a></p>
+    {% else %}
+    <h1 id="profileDropDown">Welcome Guest</h1>
+    <p><a href="/login" id="qsLoginBtn">Login</a></p>
+    {% endif %}
+    <h2>
+        <a href="/">SCHEDULE</a>
+        <a href="/standings">STANDINGS</a>
+        {% for i in range(data.get_num_rounds_played()) %}
+            <a href="{{ url_for('round', round_num = i+1) }}">ROUND {{i+1}}</a>
+        {% endfor %}
+        {% if session and session.userinfo.nickname in admins %}
+            <a href="/match">ADD NEW MATCH</a>
+        {% endif %}
+    </h2>
+
+    <table>
+        <tr>
+            <th>TEAM 1</th>
+            <th>TEAM 2</th>
+            <th>SCORE</th>
+        </tr>
+        {% for game in games %}
+            <tr>
+                <td>{{game.team_1}}</td>
+                <td>{{game.team_2}}</td>
+                <td>{{game.team_1_score}} : {{game.team_2_score}}</td>
+                {% if session and session.userinfo.nickname in admins %}
+                <td><a href="{{ url_for('match', match_id = game.id if game else -1) }}">EDIT</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h3>COMMENTS</h3>
+        {% if session %}
+        <form action="/new/comment" method="POST">
+            <input type="text" name="new_text" value="New comment" />
+            <input type="hidden" name="round_num" value={{round_num}} />
+            <input type="hidden" name="username" value={{session.userinfo.nickname}} />
+            <input type="submit" name="add" value="ADD" />
+        </form>
+        {% endif %}
+        <ul>
+            {% for comment in comments %}
+                <li><b>{{comment.comment_text}}</b> -> by {{comment.username}} at {{comment.date_created}}</li>
+                {% if session and session.userinfo.nickname == comment.username %}
+                <form action="/comment" method="POST">
+                    <label for="new_text">EDIT COMMENT</label>
+                    <input type="text" name="new_text" value="Edited comment" />
+                    <input type="hidden" name="comment_id" value={{comment.id}} />
+                    <input type="hidden" name="round_num" value={{round_num}} />
+                    <input type="submit" name="edit" value="EDIT" />
+                    <input type="submit" name="delete" value="DELETE" />
+                </form>
+                {% elif session and session.userinfo.nickname in admins %}
+                <form action="/comment" method="POST">
+                    <input type="hidden" name="comment_id" value={{comment.id}} />
+                    <input type="hidden" name="round_num" value={{round_num}} />
+                    <input type="submit" name="delete" value="DELETE" />
+                </form>
+                {% endif %}
+            {% endfor %}
+        </ul>
+  </body>
+</html>

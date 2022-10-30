@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Current Standings</title>
+  </head>
+  <body>
+    {% if session %}
+    <h1>Welcome {{session.userinfo.name}}!</h1>
+    <p><a href="/logout" id="qsLogoutBtn">Logout</a></p>
+    {% else %}
+    <h1 id="profileDropDown">Welcome Guest</h1>
+    <p><a href="/login" id="qsLoginBtn">Login</a></p>
+    {% endif %}
+    <h2>
+        <a href="/">SCHEDULE</a>
+        <a href="/standings">STANDINGS</a>
+        {% for i in range(data.get_num_rounds_played()) %}
+            <a href="{{ url_for('round', round_num = i+1) }}">ROUND {{i+1}}</a>
+        {% endfor %}
+        {% if session and session.userinfo.nickname in admins %}
+            <a href="/match">ADD NEW MATCH</a>
+        {% endif %}
+    </h2>
+
+    <table>
+        <tr>
+            <th>POSITION</th>
+            <th>TEAM NAME</th>
+            <th>TEAM POINTS</th>
+            <th>GOAL DIFF</th>
+        </tr>
+        {% for team in data.get_points_table() %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{team.team_name}}</td>
+                <td>{{team.points}}</td>
+                <td>{{team.goal_diff}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Edit Match</title>
+  </head>
+  <body>
+    {% if session %}
+    <h1>Welcome {{session.userinfo.name}}!</h1>
+    <p><a href="/logout" id="qsLogoutBtn">Logout</a></p>
+    {% else %}
+    <h1 id="profileDropDown">Welcome Guest</h1>
+    <p><a href="/login" id="qsLoginBtn">Login</a></p>
+    {% endif %}
+    <h2>
+        <a href="/">SCHEDULE</a>
+        <a href="/standings">STANDINGS</a>
+        {% for i in range(data.get_num_rounds_played()) %}
+            <a href="{{ url_for('round', round_num = i+1) }}">ROUND {{i+1}}</a>
+        {% endfor %}
+        {% if session and session.userinfo.nickname in admins %}
+            <a href="/match">ADD NEW MATCH</a>
+        {% endif %}
+    </h2>
+
+
+    <form action="/editmatch" method="POST">
+        <label for="team_1_score">{{match_data.team_1}} score:</label>
+        <input type="text" name="team_1_score" />
+        <label for="team_2_score">{{match_data.team_2}} score:</label>
+        <input type="text" name="team_2_score" />
+        <input type="hidden" name="match_id" value={{match_data.id}} />
+        <input type="hidden" name="round_num" value={{match_data.round_num}} />
+        <input type="submit" name="edit" value="EDIT" />
+    </form>
+  </body>
+</html>
