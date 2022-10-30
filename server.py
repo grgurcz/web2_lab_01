@@ -31,7 +31,7 @@ oauth.register(
 
 
 INITIAL_DATA = load_initial_data()
-ADMIN_USERS = ['grgur.crnogorac6']
+ADMIN_USERS = ['grgur.crnogorac6', 'baxeni8458']
 
 
 @app.route("/")
